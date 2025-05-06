@@ -14,10 +14,10 @@
 #################################################################################################################################
 
 # Check for Personal Profile Updates
-function Update-Profile {
+<# function Update-Personal {
     try {
         $url = "https://raw.githubusercontent.com/ehause0613/personalpwsh/main/profile.ps1"
-        $oldhash = Get-FileHash $PROFILE
+        $oldhash = Get-FileHash $HOME/Documents/PowerShell/profile.ps1
         Invoke-RestMethod $url -OutFile "$env:temp/profile.ps1"
         $newhash = Get-FileHash "$env:temp/profile.ps1"
         if ($newhash.Hash -ne $oldhash.Hash) {
@@ -34,10 +34,12 @@ function Update-Profile {
     finally {
         Remove-Item "$env:temp/profile.ps1" -ErrorAction SilentlyContinue
     }
-}
+} #>
 
 # Weather
-function Get-Wx { (Invoke-WebRequest https://wttr.in).Content }
+function Wx { (Invoke-WebRequest https://wttr.in).Content }
 
 # Network Utilities
-function Get-PubIP { (Invoke-WebRequest https://ifconfig.me/ip).Content }
+function PubIP { (Invoke-WebRequest https://ifconfig.me/ip).Content }
+
+function NetIP {Get-NetIPConfiguration}
