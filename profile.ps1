@@ -45,7 +45,7 @@ if (-not (Get-Module -ListAvailable -Name Terminal-Icons)) {
 Import-Module -Name Terminal-Icons
 
 # Check for Personal Profile Updates
-function Update-Personal {
+function Update-Profile {
     try {
         $url = "https://raw.githubusercontent.com/ehause0613/personalpwsh/main/profile.ps1"
         $oldhash = Get-FileHash $HOME/Documents/PowerShell/profile.ps1
