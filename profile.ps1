@@ -1,7 +1,7 @@
 $debug = $false
 
 # Define the path to the file that stores the last execution time
-$timeFilePath = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastExecutionTime.txt"
+# $timeFilePath = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastExecutionTime.txt"
 
 # Define the update interval in days, set to -1 to always check
 $updateInterval = -1
@@ -68,19 +68,19 @@ function Check-Profile {
 }
 
 # Check if not in debug mode AND (updateInterval is -1 OR file doesn't exist OR time difference is greater than the update interval)
-if (-not $debug -and `
-    ($updateInterval -eq -1 -or `
-            -not (Test-Path $timeFilePath) -or `
-        ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $timeFilePath), 'yyyy-MM-dd', $null)).TotalDays -gt $updateInterval)) {
-
-    Check-Profile
-    $currentTime = Get-Date -Format 'yyyy-MM-dd'
-    $currentTime | Out-File -FilePath $timeFilePath
-
-}
-elseif ($debug) {
-    Write-Warning "Skipping profile check in debug mode"
-}
+# if (-not $debug -and `
+#     ($updateInterval -eq -1 -or `
+#             -not (Test-Path $timeFilePath) -or `
+#         ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $timeFilePath), 'yyyy-MM-dd', $null)).TotalDays -gt $updateInterval)) {
+# 
+#     Check-Profile
+#     $currentTime = Get-Date -Format 'yyyy-MM-dd'
+#     $currentTime | Out-File -FilePath $timeFilePath
+# 
+# }
+# elseif ($debug) {
+#     Write-Warning "Skipping profile check in debug mode"
+# }
 
 # Weather
 function Get-Wx { (Invoke-WebRequest https://wttr.in).Content }
