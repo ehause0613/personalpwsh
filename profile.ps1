@@ -48,7 +48,7 @@ $global:canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -Timeout
 function Check-Profile {
     try {
         $url = "https://raw.githubusercontent.com/ehause0613/personalpwsh/main/profile.ps1"
-        $oldhash = Get-FileHash $HOME/Documents/PowerShell/profile.ps1 # C:\Users\ErikHauser\Documents\PowerShell\.profile.ps1
+        $oldhash = Get-FileHash $HOME/Documents/PowerShell/profile.ps1 # C:\Users\<username>\Documents\PowerShell\profile.ps1
         Invoke-RestMethod $url -OutFile "$env:temp/profile.ps1"
         $newhash = Get-FileHash "$env:temp/profile.ps1"
         if ($newhash.Hash -ne $oldhash.Hash) {
@@ -90,14 +90,16 @@ function PubIP { (Invoke-WebRequest https://ifconfig.me/ip).Content }
 
 function NetIP {Get-NetIPConfiguration}
 
-function IPInfo try {
-    $IPaddress = Read-Host "Enter IP address to locate"
+function IPInfo {
+    try {
+        $IPaddress = Read-Host "Enter IP address to locate"
 
-    $result = Invoke-RestMethod -Method Get -Uri "http://ip-api.com/json/$IPaddress"
-    Write-Output $result
-} catch {
-    "⚠️ Error in line $($_.InvocationInfo.ScriptLineNumber): $($Error[0])"
-    exit 1
+        $result = Invoke-RestMethod -Method Get -Uri "http://ip-api.com/json/$IPaddress"
+        Write-Output $result
+    } catch {
+        Write-Host "⚠️ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    }
 }
 
 # WinGet App Updates
