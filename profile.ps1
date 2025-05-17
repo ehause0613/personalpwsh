@@ -83,11 +83,22 @@ function Check-Profile {
 # }
 
 # Weather
-function Get-Wx { (Invoke-WebRequest https://wttr.in).Content }
+function Wx { (Invoke-WebRequest https://wttr.in).Content }
 
 # Network Utilities
-function Get-PubIP { (Invoke-WebRequest https://ifconfig.me/ip).Content }
+function PubIP { (Invoke-WebRequest https://ifconfig.me/ip).Content }
 
 function NetIP {Get-NetIPConfiguration}
 
+function IPInfo try {
+    $IPaddress = Read-Host "Enter IP address to locate"
+
+    $result = Invoke-RestMethod -Method Get -Uri "http://ip-api.com/json/$IPaddress"
+    Write-Output $result
+} catch {
+    "⚠️ Error in line $($_.InvocationInfo.ScriptLineNumber): $($Error[0])"
+    exit 1
+}
+
+# WinGet App Updates
 function WG { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown}
