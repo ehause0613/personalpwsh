@@ -1,7 +1,7 @@
 $debug = $false
 
 # Define the path to the file that stores the last execution time
-# $timeFilePath = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastExecutionTime.txt"
+$timeFilePath = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastExecutionTime.txt"
 
 # Define the update interval in days, set to -1 to always check
 $updateInterval = -1
@@ -37,15 +37,8 @@ if ($debug) {
 # Initial GitHub.com connectivity check with 1 second timeout
 $global:canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
 
-# Import Modules and External Profiles
-# Ensure Terminal-Icons module is installed before importing
-# if (-not (Get-Module -ListAvailable -Name Terminal-Icons)) {
-#     Install-Module -Name Terminal-Icons -Scope CurrentUser -Force -SkipPublisherCheck
-# }
-# Import-Module -Name Terminal-Icons
-
 # Check for Personal Profile Updates
-function Check-Profile {
+function Update-Profile {
     try {
         $url = "https://raw.githubusercontent.com/ehause0613/personalpwsh/main/profile.ps1"
         $oldhash = Get-FileHash $HOME/Documents/PowerShell/profile.ps1 # C:\Users\<username>\Documents\PowerShell\profile.ps1
@@ -73,7 +66,7 @@ if (-not $debug -and `
             -not (Test-Path $timeFilePath) -or `
         ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $timeFilePath), 'yyyy-MM-dd', $null)).TotalDays -gt $updateInterval)) {
 
-    Check-Profile
+    Update-Profile
     $currentTime = Get-Date -Format 'yyyy-MM-dd'
     $currentTime | Out-File -FilePath $timeFilePath
 
@@ -91,15 +84,16 @@ function PubIP { (Invoke-WebRequest https://ifconfig.me/ip).Content }
 function NetIP {Get-NetIPConfiguration}
 
 function IPInfo {
-    try {
-        $IPaddress = Read-Host "Enter IP address to locate"
+    try {
+        $IPaddress = Read-Host "Enter IP address to locate"
 
-        $result = Invoke-RestMethod -Method Get -Uri "http://ip-api.com/json/$IPaddress"
-        Write-Output $result
-    } catch {
-        Write-Host "⚠️ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)" -ForegroundColor Red
-        exit 1
-    }
+        $result = Invoke-RestMethod -Method Get -Uri "http://ip-api.com/json/$IPaddress"
+        Write-Output $result
+    }
+    catch {
+        Write-Host "⚠️ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    }
 }
 
 # WinGet App Updates
