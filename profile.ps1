@@ -1,7 +1,7 @@
 $debug = $false
 
 # Define the path to the file that stores the last execution time
-$timeFilePath = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastExecutionTime.txt"
+# $timeFilePath = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastExecutionTime.txt"
 
 # Define the update interval in days, set to -1 to always check
 $updateInterval = -1
@@ -39,21 +39,21 @@ $global:canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -Timeout
 
 # Import Modules and External Profiles
 # Ensure Terminal-Icons module is installed before importing
-if (-not (Get-Module -ListAvailable -Name Terminal-Icons)) {
-    Install-Module -Name Terminal-Icons -Scope CurrentUser -Force -SkipPublisherCheck
-}
-Import-Module -Name Terminal-Icons
+# if (-not (Get-Module -ListAvailable -Name Terminal-Icons)) {
+#     Install-Module -Name Terminal-Icons -Scope CurrentUser -Force -SkipPublisherCheck
+# }
+# Import-Module -Name Terminal-Icons
 
 # Check for Personal Profile Updates
-function Update-Profile {
+function Check-Profile {
     try {
         $url = "https://raw.githubusercontent.com/ehause0613/personalpwsh/main/profile.ps1"
-        $oldhash = Get-FileHash $HOME/Documents/PowerShell/profile.ps1
+        $oldhash = Get-FileHash $HOME/Documents/PowerShell/profile.ps1 # C:\Users\ErikHauser\Documents\PowerShell\.profile.ps1
         Invoke-RestMethod $url -OutFile "$env:temp/profile.ps1"
         $newhash = Get-FileHash "$env:temp/profile.ps1"
         if ($newhash.Hash -ne $oldhash.Hash) {
-            Copy-Item -Path "$env:temp/profile.ps1" -Destination $PROFILE -Force
-            Write-Host "Personal Profile has been updated. Please restart your shell to reflect changes" -ForegroundColor Magenta
+            Copy-Item -Path "$env:temp/profile.ps1" -Destination $HOME/Documents/PowerShell/profile.ps1 -Force
+            Write-Host "Personal Profile has been updated. Please restart to reflect changes" -ForegroundColor Magenta
         }
         else {
             Write-Host "Personal Profile is up to date." -ForegroundColor Green
@@ -73,13 +73,13 @@ if (-not $debug -and `
             -not (Test-Path $timeFilePath) -or `
         ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $timeFilePath), 'yyyy-MM-dd', $null)).TotalDays -gt $updateInterval)) {
 
-    Update-Profile
+    Check-Profile
     $currentTime = Get-Date -Format 'yyyy-MM-dd'
     $currentTime | Out-File -FilePath $timeFilePath
 
 }
 elseif ($debug) {
-    Write-Warning "Skipping profile update check in debug mode"
+    Write-Warning "Skipping profile check in debug mode"
 }
 
 # Weather
