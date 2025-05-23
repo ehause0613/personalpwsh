@@ -87,7 +87,7 @@ function IPInfo {
     try {
         $IPaddress = Read-Host "Enter IP address to locate"
 
-        $result = Invoke-RestMethod -Method Get -Uri "http://ip-api.com/json/$IPaddress"
+        $result = Invoke-RestMethod -Method Get -Uri "https://ip-api.com/json/$IPaddress"
         Write-Output $result
     }
     catch {
@@ -98,3 +98,7 @@ function IPInfo {
 
 # WinGet App Updates
 function WG { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown}
+
+# Time
+function Time { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
+
