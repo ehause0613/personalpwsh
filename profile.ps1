@@ -96,6 +96,8 @@ function IPInfo {
     }
 }
 
+function DNS {Get-Dns}
+
 # WinGet App Updates
 function WG { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown}
 
