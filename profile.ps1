@@ -4,7 +4,7 @@ $debug = $false
 $timeFilePath = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastExecutionTime.txt"
 
 # Define the update interval in days, set to -1 to always check
-$updateInterval = 1
+$updateInterval = 5
 
 if ($debug) {
     Write-Host "#######################################" -ForegroundColor Red
@@ -97,8 +97,10 @@ function IPInfo {
 }
 
 # WinGet App Updates
-function WG { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown}
+function WG { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force }
+# --include-unknown
 
 # Time
 function Time { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
+
 
