@@ -100,7 +100,11 @@ function IPInfo {
 function WG { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force }
 # --include-unknown
 
+# WinGet App Updates Including Unknown
+function WGUN { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown }
+
 # Time
 function Time { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
+
 
 
