@@ -66,7 +66,7 @@ if (-not $debug -and `
             -not (Test-Path $timeFilePath) -or `
         ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $timeFilePath), 'yyyy-MM-dd', $null)).TotalDays -gt $updateInterval)) {
 
-    Update-Profile
+    Update-PersonalProfile
     $currentTime = Get-Date -Format 'yyyy-MM-dd'
     $currentTime | Out-File -FilePath $timeFilePath
 
@@ -105,6 +105,7 @@ function WGUN { winget upgrade --all --accept-package-agreements --accept-source
 
 # Time
 function Time { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
+
 
 
 
