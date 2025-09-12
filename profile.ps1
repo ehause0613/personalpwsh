@@ -38,7 +38,7 @@ if ($debug) {
 $global:canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
 
 # Check for Personal Profile Updates
-function Update-Profile {
+function Update-PersonalProfile {
     try {
         $url = "https://raw.githubusercontent.com/ehause0613/personalpwsh/main/profile.ps1"
         $oldhash = Get-FileHash $HOME/Documents/PowerShell/profile.ps1 # C:\Users\<username>\Documents\PowerShell\profile.ps1
@@ -105,6 +105,7 @@ function WGUN { winget upgrade --all --accept-package-agreements --accept-source
 
 # Time
 function Time { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
+
 
 
 
