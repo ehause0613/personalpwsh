@@ -4,7 +4,7 @@ $debug = $false
 $timeFilePath = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastExecutionTime.txt"
 
 # Define the update interval in days, set to -1 to always check
-$updateInterval = 5
+$updateInterval = 3
 
 if ($debug) {
     Write-Host "#######################################" -ForegroundColor Red
@@ -105,6 +105,7 @@ function WGUN { winget upgrade --all --accept-package-agreements --accept-source
 
 # Time
 function Time { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
+
 
 
 
