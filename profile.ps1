@@ -107,7 +107,8 @@ function WGUN { winget upgrade --all --accept-package-agreements --accept-source
 function Time { (Invoke-RestMethod -Uri "http://worldtimeapi.org/api/timezone/America/New_York") }
 
 # Time Secure
-function Time { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
+function sTime { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
+
 
 
 
