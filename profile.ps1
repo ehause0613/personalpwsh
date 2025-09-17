@@ -4,7 +4,7 @@ $debug = $false
 $timeFilePath = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastExecutionTime.txt"
 
 # Define the update interval in days, set to -1 to always check
-$updateInterval = 3
+$updateInterval = 1
 
 if ($debug) {
     Write-Host "#######################################" -ForegroundColor Red
@@ -75,6 +75,12 @@ elseif ($debug) {
     Write-Warning "Skipping profile check in debug mode"
 }
 
+# Enable My Choice of Oh My Posh Theme
+function Get-Theme_Override
+{
+    oh-my-posh init pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/agnosterplus.omp.json | Invoke-Expression
+}
+
 # Weather
 function Wx { (Invoke-WebRequest https://wttr.in).Content }
 
@@ -108,6 +114,7 @@ function Time { (Invoke-RestMethod -Uri "http://worldtimeapi.org/api/timezone/Am
 
 # Time Secure
 function sTime { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
+
 
 
 
