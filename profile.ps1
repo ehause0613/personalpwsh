@@ -102,9 +102,11 @@ function IPInfo {
     }
 }
 
+# WinGet App Updates List
+function WGL { winget upgrade }
+
 # WinGet App Updates
-function WG { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force }
-# --include-unknown
+function WGA { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force }
 
 # WinGet App Updates Including Unknown
 function WGUN { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown }
@@ -114,6 +116,7 @@ function Time { (Invoke-RestMethod -Uri "http://worldtimeapi.org/api/timezone/Am
 
 # Time Secure
 function sTime { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
+
 
 
 
