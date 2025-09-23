@@ -76,10 +76,10 @@ elseif ($debug) {
 }
 
 # Enable My Choice of Oh My Posh Theme
-#function Get-Theme_Override
-#{
-#    oh-my-posh init pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/agnosterplus.omp.json | Invoke-Expression
-#}
+function Get-Theme_Override
+{
+    oh-my-posh init pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/agnosterplus.omp.json | Invoke-Expression
+}
 
 # Weather
 function Wx { (Invoke-WebRequest https://wttr.in).Content }
@@ -114,6 +114,7 @@ function Time { (Invoke-RestMethod -Uri "http://worldtimeapi.org/api/timezone/Am
 
 # Time Secure
 function sTime { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
+
 
 
 
