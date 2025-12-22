@@ -117,6 +117,8 @@ function Time { (Invoke-RestMethod -Uri "http://worldtimeapi.org/api/timezone/Am
 # Time Secure
 function sTime { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
 
+# Sppedtest (Must have Ookla Speedtest CLI Installed
+function speed  { SPEEDTEST }
 
 
 
