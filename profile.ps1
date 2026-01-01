@@ -84,11 +84,14 @@ function Get-Theme_Override
 # Weather
 function Wx { (Invoke-WebRequest https://wttr.in).Content }
 
-# Network Utilities
+# NETWORK UTILITIES
+
+# What is My Public IP
 function PubIP { (Invoke-WebRequest https://ifconfig.me/ip).Content }
 
 function NetIP {Get-NetIPConfiguration}
 
+# Find Info On a Public IP
 function IPInfo {
     try {
         $IPaddress = Read-Host "Enter IP address to locate"
@@ -118,14 +121,7 @@ function Time { (Invoke-RestMethod -Uri "http://worldtimeapi.org/api/timezone/Am
 function sTime { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
 
 # Sppedtest (Must have Ookla Speedtest CLI Installed
-function speed  { SPEEDTEST }
+function speed { SPEEDTEST }
 
-
-
-
-
-
-
-
-
-
+# Restore Windows Health - DISM
+function dism { DISM /ONLINE /CLEANUP-IMAGE /RESTOREHEALTH }
