@@ -114,14 +114,21 @@ function WGA { winget upgrade --all --accept-package-agreements --accept-source-
 # WinGet App Updates Including Unknown
 function WGUN { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown }
 
-# Time
-function Time { (Invoke-RestMethod -Uri "http://worldtimeapi.org/api/timezone/America/New_York") }
-
-# Time Secure
-function sTime { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
-
 # Sppedtest (Must have Ookla Speedtest CLI Installed
 function speed { SPEEDTEST }
 
 # Restore Windows Health - DISM
 function dism { DISM /ONLINE /CLEANUP-IMAGE /RESTOREHEALTH }
+
+
+#################################################################################################################################
+############                                                                                                         ############
+############                                   Functions Below Have Been Retired                                     ############
+############                                                                                                         ############
+#################################################################################################################################
+
+# Time
+# function Time { (Invoke-RestMethod -Uri "http://worldtimeapi.org/api/timezone/America/New_York") }
+
+# Time Secure
+# function sTime { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
