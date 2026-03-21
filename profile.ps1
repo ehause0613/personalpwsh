@@ -81,10 +81,19 @@ function Get-Theme_Override
     oh-my-posh init pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/agnosterplus.omp.json | Invoke-Expression
 }
 
-# Weather
+#################################################################################################################################
+############                                                                                                         ############
+############                                               Weather Functions                                         ############
+############                                                                                                         ############
+#################################################################################################################################
+
 function Wx { (Invoke-WebRequest https://wttr.in).Content }
 
-# NETWORK UTILITIES
+#################################################################################################################################
+############                                                                                                         ############
+############                                               Network Functions                                         ############
+############                                                                                                         ############
+#################################################################################################################################
 
 # What is My Public IP
 function PubIP { (Invoke-WebRequest https://ifconfig.me/ip).Content }
@@ -105,6 +114,26 @@ function IPInfo {
     }
 }
 
+# Find Info On a MAC ADDRESS
+function MAC {
+    try {
+        $MACaddress = Read-Host "Enter MAC address to lookup"
+
+        $result = Invoke-RestMethod -Method Get -Uri "https://api.macvendors.com/$MACaddress"
+        Write-Output $result
+    }
+    catch {
+        Write-Host "⚠️ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    }
+}
+
+#################################################################################################################################
+############                                                                                                         ############
+############                                                WinGet Functions                                         ############
+############                                                                                                         ############
+#################################################################################################################################
+
 # WinGet App Updates List
 function WGL { winget upgrade }
 
@@ -123,7 +152,7 @@ function dism { DISM /ONLINE /CLEANUP-IMAGE /RESTOREHEALTH }
 
 #################################################################################################################################
 ############                                                                                                         ############
-############                                   Functions Below Have Been Retired                                     ############
+############                                                    Retired                                              ############
 ############                                                                                                         ############
 #################################################################################################################################
 
