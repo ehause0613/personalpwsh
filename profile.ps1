@@ -97,8 +97,8 @@ function Wx { (Invoke-WebRequest https://wttr.in).Content }
 
 
 function Time {
-    Invoke-RestMethod -Uri "https://timeapi.io/api/Time/current/America_New_York"
-    Invoke-RestMethod -Uri "https://timeapi.io/api/Time/current/Europe_Dublin"
+    Invoke-RestMethod -Uri "https://timeapi.io/api/Time/current/zone?timeZone=America/New_York"
+    Invoke-RestMethod -Uri "https://timeapi.io/api/Time/current/zone?timeZone=Europe/Dublin"
 }
 
 
