@@ -6,6 +6,11 @@ WEATHER FUNCTIONS
 - https://wttr.in
 
 
+TIME FUNCTIONS
+
+- https://timeapi.io/api/Time/current/coordinate
+- 
+
 NETWORK FUNCTIONS
 
 - What is My Public IP: https://ifconfig.me/ip
