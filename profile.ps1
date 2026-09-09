@@ -213,6 +213,107 @@ function MAC {
 
 #################################################################################################################################
 ############                                                                                                         ############
+############                                            Process Management                                           ############
+############                                                                                                         ############
+#################################################################################################################################
+
+# Kill a process by name
+function KillProc($name) {
+    try {
+        Get-Process $name -ErrorAction Stop | Stop-Process -Force
+    }
+    catch {
+        Write-Host "⚠ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    }
+}
+
+# Watch a process's resource usage live
+function WatchProc($name) {
+    while ($true) {
+        Clear-Host
+        Get-Process $name -ErrorAction SilentlyContinue | Select-Object Name, CPU, WorkingSet, Id
+        Start-Sleep -Seconds 2
+    }
+}
+
+
+#################################################################################################################################
+############                                                                                                         ############
+############                                         VPN / Connectivity                                              ############
+############                                                                                                         ############
+#################################################################################################################################
+
+# Quick check: am I on the VPN right now?
+function VPNStatus {
+    try {
+        Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*WireGuard*" } |
+            Select-Object Name, Status, LinkSpeed
+    }
+    catch {
+        Write-Host "⚠ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    }
+}
+
+# Ping your UDM gateway to confirm home network reachability
+function PingHome {
+    try {
+        Test-Connection 10.0.1.1 -Count 4 -ErrorAction Stop
+    }
+    catch {
+        Write-Host "⚠ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    }
+}
+
+
+#################################################################################################################################
+############                                                                                                         ############
+############                                          Clipboard & Misc Utilities                                     ############
+############                                                                                                         ############
+#################################################################################################################################
+
+# Generate a random password
+function NewPassword($length = 20) {
+    -join ((48..57) + (65..90) + (97..122) | Get-Random -Count $length | ForEach-Object { [char]$_ })
+}
+
+# Quick file hash
+function Hash($path) {
+    try {
+        (Get-FileHash $path -Algorithm SHA256 -ErrorAction Stop).Hash
+    }
+    catch {
+        Write-Host "⚠ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    }
+}
+
+# Extract a zip quickly
+function Unzip($file) {
+    try {
+        Expand-Archive -Path $file -DestinationPath (Split-Path $file) -ErrorAction Stop
+    }
+    catch {
+        Write-Host "⚠ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    }
+}
+
+
+#################################################################################################################################
+############                                                                                                         ############
+############                                               Profile Management                                        ############
+############                                                                                                         ############
+#################################################################################################################################
+
+# List all custom functions currently loaded from this profile
+function MyFunctions { Get-Command -CommandType Function | Where-Object { $_.Source -eq '' } | Select-Object Name }
+
+
+#################################################################################################################################
+############                                                                                                         ############
 ############                                                WinGet Functions                                         ############
 ############                                                                                                         ############
 #################################################################################################################################
