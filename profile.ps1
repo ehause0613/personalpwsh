@@ -159,6 +159,18 @@ function Disk {
 ############                                                                                                         ############
 #################################################################################################################################
 
+# Ping a specified IP to confirm reachability
+function PingIP {
+    try {
+        $target = Read-Host "Enter IP address to ping"
+        Test-Connection $target -Count 4 -ErrorAction Stop
+    }
+    catch {
+        Write-Host "⚠ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    }
+}
+
 # Flush DNS cache
 function FlushDNS { Clear-DnsClientCache; Write-Host "DNS cache cleared" -ForegroundColor Green }
 
