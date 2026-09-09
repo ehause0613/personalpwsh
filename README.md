@@ -3,13 +3,13 @@ Functions and shortcuts to add to my Powershell profile, using profile.ps1.
 
 WEATHER FUNCTIONS
 
-- https://wttr.in
+- https://wttr.in (resolves to Germany for Region filtering purposes).
 
 
 TIME FUNCTIONS
 
 - https://timeapi.io/api/Time/current/coordinate
-- 
+
 
 NETWORK FUNCTIONS
 
@@ -32,7 +32,3 @@ WINGET FUNCTIONS
 
 - WinGet App Updates Including Unknown: function WGUN { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown }
 
-
-WINDOWS FUNCTIONS
-
-- Restore Windows Health - DISM: function dism { DISM /ONLINE /CLEANUP-IMAGE /RESTOREHEALTH }
