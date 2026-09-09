@@ -4,7 +4,7 @@ $debug = $false
 $timeFilePath = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastExecutionTime.txt"
 
 # Define the update interval in days, set to -1 to always check
-$updateInterval = 1
+$updateInterval = -1
 
 if ($debug) {
     Write-Host "#######################################" -ForegroundColor Red
@@ -35,7 +35,7 @@ if ($debug) {
 #################################################################################################################################
 
 # Initial GitHub.com connectivity check with 1 second timeout
-$global:canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
+#$global:canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
 
 # Check for Personal Profile Updates
 function Update-PersonalProfile {
@@ -100,30 +100,6 @@ function Time {
     Invoke-RestMethod -Uri "https://timeapi.io/api/Time/current/zone?timeZone=America/New_York"
     Invoke-RestMethod -Uri "https://timeapi.io/api/Time/current/zone?timeZone=Europe/Dublin"
 }
-
-
-#################################################################################################################################
-############                                                                                                         ############
-############                                         Navigation & Filesystem                                         ############
-############                                                                                                         ############
-#################################################################################################################################
-
-# Quick jump to common folders
-function proj { Set-Location "C:\Users\$env:USERNAME\Projects" }
-function dl { Set-Location "$HOME\Downloads" }
-
-# ls with more detail, sorted by last modified
-function lt { Get-ChildItem | Sort-Object LastWriteTime -Descending }
-
-# Find files by name recursively
-function ff($name) { Get-ChildItem -Recurse -Filter "*$name*" -ErrorAction SilentlyContinue }
-
-# Quick "go up N directories"
-function up($n = 1) { for ($i = 0; $i -lt $n; $i++) { Set-Location .. } }
-
-# Copy current directory path to clipboard
-function cpwd { (Get-Location).Path | Set-Clipboard }
-
 
 #################################################################################################################################
 ############                                                                                                         ############
@@ -313,6 +289,27 @@ function Unzip($file) {
     }
 }
 
+#################################################################################################################################
+############                                                                                                         ############
+############                                         Navigation & Filesystem                                         ############
+############                                                                                                         ############
+#################################################################################################################################
+
+# Quick jump to common folders
+function proj { Set-Location "C:\Users\$env:USERNAME\Projects" }
+function dl { Set-Location "$HOME\Downloads" }
+
+# ls with more detail, sorted by last modified
+function lt { Get-ChildItem | Sort-Object LastWriteTime -Descending }
+
+# Find files by name recursively
+function ff($name) { Get-ChildItem -Recurse -Filter "*$name*" -ErrorAction SilentlyContinue }
+
+# Quick "go up N directories"
+function up($n = 1) { for ($i = 0; $i -lt $n; $i++) { Set-Location .. } }
+
+# Copy current directory path to clipboard
+function cpwd { (Get-Location).Path | Set-Clipboard }
 
 #################################################################################################################################
 ############                                                                                                         ############
@@ -343,6 +340,4 @@ function WGUN { winget upgrade --all --accept-package-agreements --accept-source
 function SPEED { SPEEDTEST }
 
 # Restore Windows Health - DISM
-function dism { DISM /ONLINE /CLEANUP-IMAGE /RESTOREHEALTH }
-
-
+# function dism { DISM /ONLINE /CLEANUP-IMAGE /RESTOREHEALTH }
