@@ -107,9 +107,6 @@ function Time {
 ############                                                                                                         ############
 #################################################################################################################################
 
-# Quick uptime
-function Uptime { (Get-CimInstance Win32_OperatingSystem).LastBootUpTime }
-
 # Top processes by CPU
 function TopCPU { Get-Process | Sort-Object CPU -Descending | Select-Object -First 10 }
 
@@ -278,17 +275,6 @@ function Hash($path) {
     }
 }
 
-# Extract a zip quickly
-function Unzip($file) {
-    try {
-        Expand-Archive -Path $file -DestinationPath (Split-Path $file) -ErrorAction Stop
-    }
-    catch {
-        Write-Host "⚠ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)" -ForegroundColor Red
-        exit 1
-    }
-}
-
 #################################################################################################################################
 ############                                                                                                         ############
 ############                                         Navigation & Filesystem                                         ############
@@ -301,9 +287,6 @@ function dl { Set-Location "$HOME\Downloads" }
 
 # ls with more detail, sorted by last modified
 function lt { Get-ChildItem | Sort-Object LastWriteTime -Descending }
-
-# Find files by name recursively
-function ff($name) { Get-ChildItem -Recurse -Filter "*$name*" -ErrorAction SilentlyContinue }
 
 # Quick "go up N directories"
 function up($n = 1) { for ($i = 0; $i -lt $n; $i++) { Set-Location .. } }
