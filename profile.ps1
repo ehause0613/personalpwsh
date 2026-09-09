@@ -83,7 +83,7 @@ function Get-Theme_Override
 
 #################################################################################################################################
 ############                                                                                                         ############
-############                                               Weather Functions                                         ############
+############                                           Weather Functions                                             ############
 ############                                                                                                         ############
 #################################################################################################################################
 
@@ -91,7 +91,7 @@ function Wx { (Invoke-WebRequest https://wttr.in).Content }
 
 #################################################################################################################################
 ############                                                                                                         ############
-############                                                 Time Functions                                          ############
+############                                             Time Functions                                              ############
 ############                                                                                                         ############
 #################################################################################################################################
 
@@ -104,9 +104,79 @@ function Time {
 
 #################################################################################################################################
 ############                                                                                                         ############
-############                                               Network Functions                                         ############
+############                                         Navigation & Filesystem                                         ############
 ############                                                                                                         ############
 #################################################################################################################################
+
+# Quick jump to common folders
+function proj { Set-Location "C:\Users\$env:USERNAME\Projects" }
+function dl { Set-Location "$HOME\Downloads" }
+
+# ls with more detail, sorted by last modified
+function lt { Get-ChildItem | Sort-Object LastWriteTime -Descending }
+
+# Find files by name recursively
+function ff($name) { Get-ChildItem -Recurse -Filter "*$name*" -ErrorAction SilentlyContinue }
+
+# Quick "go up N directories"
+function up($n = 1) { for ($i = 0; $i -lt $n; $i++) { Set-Location .. } }
+
+# Copy current directory path to clipboard
+function cpwd { (Get-Location).Path | Set-Clipboard }
+
+
+#################################################################################################################################
+############                                                                                                         ############
+############                                         System Info / Diagnostics                                       ############
+############                                                                                                         ############
+#################################################################################################################################
+
+# Quick uptime
+function Uptime { (Get-CimInstance Win32_OperatingSystem).LastBootUpTime }
+
+# Top processes by CPU
+function TopCPU { Get-Process | Sort-Object CPU -Descending | Select-Object -First 10 }
+
+# Top processes by RAM
+function TopRAM { Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 10 }
+
+# Disk space summary
+function Disk {
+    try {
+        Get-PSDrive -PSProvider FileSystem | Select-Object Name,
+            @{N='UsedGB'; E={[math]::Round($_.Used/1GB,2)}},
+            @{N='FreeGB'; E={[math]::Round($_.Free/1GB,2)}}
+    }
+    catch {
+        Write-Host "⚠ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    }
+}
+
+#################################################################################################################################
+############                                                                                                         ############
+############                                            Network Functions                                            ############
+############                                                                                                         ############
+#################################################################################################################################
+
+# Flush DNS cache
+function FlushDNS { Clear-DnsClientCache; Write-Host "DNS cache cleared" -ForegroundColor Green }
+
+# Quick port check
+function TestPort {
+    try {
+        $target = Read-Host "Enter hostname or IP"
+        $port = Read-Host "Enter port"
+        Test-NetConnection -ComputerName $target -Port $port
+    }
+    catch {
+        Write-Host "⚠ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    }
+}
+
+# Show active listening ports
+function Ports { Get-NetTCPConnection -State Listen | Select-Object LocalAddress, LocalPort, OwningProcess }
 
 # What is My Public IP
 function PubIP { (Invoke-WebRequest https://ifconfig.me/ip).Content }
@@ -127,7 +197,7 @@ function IPInfo {
     }
 }
 
-# Find Info On a MAC ADDRESS
+# Find Info On A MAC ADDRESS
 function MAC {
     try {
         $MACaddress = Read-Host "Enter MAC address to lookup"
@@ -157,20 +227,9 @@ function WGA { winget upgrade --all --accept-package-agreements --accept-source-
 function WGUN { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown }
 
 # Sppedtest (Must have Ookla Speedtest CLI Installed
-function speed { SPEEDTEST }
+function SPEED { SPEEDTEST }
 
 # Restore Windows Health - DISM
 function dism { DISM /ONLINE /CLEANUP-IMAGE /RESTOREHEALTH }
 
 
-#################################################################################################################################
-############                                                                                                         ############
-############                                                    Retired                                              ############
-############                                                                                                         ############
-#################################################################################################################################
-
-# Time
-# function Time { (Invoke-RestMethod -Uri "http://worldtimeapi.org/api/timezone/America/New_York") }
-
-# Time Secure
-# function sTime { (Invoke-RestMethod -Uri "https://worldtimeapi.org/api/timezone/America/New_York") }
