@@ -331,7 +331,7 @@ function WGA { winget upgrade --all --accept-package-agreements --accept-source-
 # WinGet App Updates Including Unknown
 function WGUN { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown }
 
-# Sppedtest (Must have Ookla Speedtest CLI Installed
+# Speedtest (Must have Ookla Speedtest CLI Installed
 function SPEED { SPEEDTEST }
 
 # Restore Windows Health - DISM
