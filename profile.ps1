@@ -275,6 +275,18 @@ function Hash($path) {
     }
 }
 
+# Clear Windows temp files
+function ClearTemp {
+    Remove-Item "$env:TEMP\*" -Recurse -Force -ErrorAction SilentlyContinue
+    Write-Host "Temp files cleared" -ForegroundColor Green
+}
+
+# Empty recycle bin
+function EmptyBin {
+    Clear-RecycleBin -Confirm:$false
+    Write-Host "Recycle Bin emptied" -ForegroundColor Green
+}
+
 #################################################################################################################################
 ############                                                                                                         ############
 ############                                         Navigation & Filesystem                                         ############
