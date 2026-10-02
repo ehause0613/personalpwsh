@@ -88,6 +88,6 @@ WINGET FUNCTIONS
 
 - WinGet App Updates Including Unknown: function WGUN { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown }
 
-- Sppedtest (Must have Ookla Speedtest CLI Installed): function SPEED { SPEEDTEST }
+- Speedtest (Must have Ookla Speedtest CLI Installed): function SPEED { SPEEDTEST }
 
 - Restore Windows Health - DISM (currently commented out): function dism { DISM /ONLINE /CLEANUP-IMAGE /RESTOREHEALTH }
