@@ -126,7 +126,7 @@ function NetIP {Get-NetIPConfiguration}
 # Find Info On a Public IP
 function IPInfo {
     try {
-        $IPaddress = Read-Host "Enter IP Address To Locate:"
+        $IPaddress = Read-Host "Enter IPv4/IPv6 Address Or Domain To Locate:"
 
         $result = Invoke-RestMethod -Method Get -Uri "http://ip-api.com/json/$IPaddress"
         Write-Output $result
