@@ -7,9 +7,9 @@ REQUIREMENTS
 
 - PowerShell 7 (profile lives at Documents\PowerShell\profile.ps1, the "Current User, All Hosts" profile).
 
-- Chris Titus Tech's PowerShell profile (Microsoft.PowerShell_profile.ps1). It loads after this file. Install with: irm "https://github.com/ChrisTitusTech/powershell-profile/raw/main/setup.ps1" | iex
+- Chris Titus Tech's PowerShell profile. Install with: irm "https://github.com/ChrisTitusTech/powershell-profile/raw/main/setup.ps1" | iex
 
-- Oh My Posh (for the prompt theme).
+- Oh My Posh (for the prompt theme). Gets installed as a part of the CTT command above.
 
 - Ookla Speedtest CLI (optional, for SPEED): Install with: winget install Ookla.Speedtest.CLI
 
@@ -71,9 +71,9 @@ NETWORK FUNCTIONS
 PROCESS MANAGEMENT
 
 - Kill A Process By Name: function KillProc. Lists matches and asks for confirmation.
-  - KillProc notepad          Confirm before killing
-  - KillProc notepad -Force   No confirmation
-  - KillProc notepad -WhatIf  Preview only
+  - KillProc notepad                Confirm before killing
+  - KillProc notepad -Force         No confirmation
+  - KillProc notepad -WhatIf        Preview only
 
 - Watch A Process's Resource Usage Live: function WatchProc. Shows CPU %, memory and threads. Ctrl+C to stop.
   - WatchProc chrome -Interval 5
