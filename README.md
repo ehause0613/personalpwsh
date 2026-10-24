@@ -24,16 +24,16 @@ STARTUP BEHAVIOR
 WEATHER FUNCTIONS
 
 - Check Weather: function Wx. https://wttr.in (resolves to Germany, for Region filtering purposes). US units.
-  - Wx                Weather for your current location
-  - Wx London         Weather for a named location
-  - Wx -Short         One-line summary
+  - Wx:                Weather for your current location
+  - Wx London:         Weather for a named location
+  - Wx -Short:         One-line summary
 
 
 TIME FUNCTIONS
 
 - Check Time & Date: function Time. Calculated locally (no web call). Shows time, day, UTC offset and DST.
-  - Time              America/New_York and Europe/Dublin
-  - Time -Zones       'Asia/Tokyo','America/Denver'
+  - Time:              America/New_York and Europe/Dublin
+  - Time -Zones:       'Asia/Tokyo','America/Denver'
 
 
 SYSTEM INFO / DIAGNOSTICS
