@@ -90,7 +90,7 @@ function Disk {
 # Ping a specified IP to confirm reachability
 function PingIP {
     try {
-        $target = Read-Host "Enter IP Address To Ping:"
+        $target = Read-Host "Enter IP Address To Ping"
         Test-Connection $target -Count 4 -ErrorAction Stop
     }
     catch {
@@ -105,8 +105,8 @@ function FlushDNS { Clear-DnsClientCache; Write-Host "DNS cache cleared!" -Foreg
 # Quick port check
 function TestPort {
     try {
-        $target = Read-Host "Enter Hostname Or IP:"
-        $port = Read-Host "Enter Port:"
+        $target = Read-Host "Enter Hostname Or IP"
+        $port = Read-Host "Enter Port"
         Test-NetConnection -ComputerName $target -Port $port
     }
     catch {
@@ -126,7 +126,7 @@ function NetIP {Get-NetIPConfiguration}
 # Find Info On a Public IP
 function IPInfo {
     try {
-        $IPaddress = Read-Host "Enter IPv4/IPv6 Address Or Domain To Locate:"
+        $IPaddress = Read-Host "Enter IPv4/IPv6 Address Or Domain To Locate"
 
         $result = Invoke-RestMethod -Method Get -Uri "http://ip-api.com/json/$IPaddress"
         Write-Output $result
@@ -140,7 +140,7 @@ function IPInfo {
 # Find Info On A MAC ADDRESS
 function MAC {
     try {
-        $MACaddress = Read-Host "Enter MAC Address To Lookup:"
+        $MACaddress = Read-Host "Enter MAC Address To Lookup"
 
         $result = Invoke-RestMethod -Method Get -Uri "https://api.macvendors.com/$MACaddress"
         Write-Output $result
@@ -194,13 +194,21 @@ function WatchProc($name) {
 
 # Quick check: am I on the VPN right now?
 function VPNStatus {
+    param(
+        [string[]]$Pattern = @('WireGuard', 'NordLynx', 'NordVPN', 'Tailscale', 'OpenVPN', 'TAP-Windows', 'AnyConnect', 'Fortinet')
+    )
+
     try {
-        Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*WireGuard*" } |
-            Select-Object Name, Status, LinkSpeed
+        # Escape each term so special characters are treated literally, then join with |
+        $regex = ($Pattern | ForEach-Object { [regex]::Escape($_) }) -join '|'
+
+        Get-NetAdapter |
+            Where-Object { $_.InterfaceDescription -match $regex -or $_.Name -match $regex } |
+            Select-Object Name, InterfaceDescription, Status, LinkSpeed
     }
     catch {
         Write-Host "⚠ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)" -ForegroundColor Red
-        exit 1
+        return
     }
 }
 
@@ -223,8 +231,38 @@ function PingHome {
 #################################################################################################################################
 
 # Generate a random password
-function NewPassword($length = 30) {
-    -join ((48..57) + (65..90) + (97..122) | Get-Random -Count $length | ForEach-Object { [char]$_ })
+function NewPassword {
+    param(
+        [int]$Length
+    )
+
+    # Prompt only if no length was passed in
+    if (-not $PSBoundParameters.ContainsKey('Length')) {
+        do {
+            $input = Read-Host "Password length (8-256, Enter for 30)"
+            if ([string]::IsNullOrWhiteSpace($input)) { $input = '30' }
+            $valid = [int]::TryParse($input, [ref]$Length) -and $Length -ge 8 -and $Length -le 256
+            if (-not $valid) { Write-Host "Enter a whole number between 8 and 256." -ForegroundColor Yellow }
+        } until ($valid)
+    }
+
+    $chars = [char[]]((48..57) + (65..90) + (97..122))   # 0-9, A-Z, a-z (62 chars)
+    $rng   = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+    $byte  = New-Object byte[] 1
+    $sb    = [System.Text.StringBuilder]::new()
+
+    try {
+        while ($sb.Length -lt $Length) {
+            $rng.GetBytes($byte)
+            # 248 = 62 * 4; discarding 248-255 avoids modulo bias
+            if ($byte[0] -lt 248) { [void]$sb.Append($chars[$byte[0] % 62]) }
+        }
+    }
+    finally {
+        $rng.Dispose()
+    }
+
+    $sb.ToString()
 }
 
 # Quick file hash
@@ -258,6 +296,7 @@ function EmptyBin {
 
 # Quick jump to common folders
 function proj { Set-Location "C:\Users\$env:USERNAME\Projects" }
+
 function dl { Set-Location "$HOME\Downloads" }
 
 # ls with more detail, sorted by last modified
