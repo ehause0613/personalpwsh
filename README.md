@@ -1,85 +1,86 @@
-# personalpwsh
-Functions and shortcuts to add to my Powershell profile, using profile.ps1.
+# personalpwsh - Person PowerShell #
+
+Description: Functions And Shortcuts To Add To My Powershell Profile, Using profile.ps1.
 
 WEATHER FUNCTIONS
 
-- Wx: https://wttr.in (resolves to Germany for Region filtering purposes).
+- Check Weather: function Wx. https://wttr.in (resolves to Germany, for Region filtering purposes).
 
 
 TIME FUNCTIONS
 
-- Time: https://timeapi.io/api/Time/current/zone?timeZone=America/New_York and Europe/Dublin
+- Check Time & Date: function Time. https://timeapi.io/api/Time/current/zone?timeZone=America/New_York and Europe/Dublin.
 
 
 SYSTEM INFO / DIAGNOSTICS
 
-- Top processes by CPU: function TopCPU { Get-Process | Sort-Object CPU -Descending | Select-Object -First 10 }
+- Top Processes By CPU: function TopCPU { Get-Process | Sort-Object CPU -Descending | Select-Object -First 10 }
 
-- Top processes by RAM: function TopRAM { Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 10 }
+- Top Processes By RAM: function TopRAM { Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 10 }
 
-- Disk space summary: function Disk
+- Disk Space Summary: function Disk
 
 
 NETWORK FUNCTIONS
 
-- Ping a specified IP to confirm reachability: function PingIP
+- Ping A Specified IP To Confirm Reachability: function PingIP
 
-- Flush DNS cache: function FlushDNS { Clear-DnsClientCache }
+- Flush DNS Cache: function FlushDNS { Clear-DnsClientCache }
 
-- Quick port check: function TestPort
+- Quick Qort Check: function TestPort
 
-- Show active listening ports: function Ports { Get-NetTCPConnection -State Listen }
+- Show Active Listening Ports: function Ports { Get-NetTCPConnection -State Listen }
 
-- What is My Public IP: https://ifconfig.me/ip
+- What Is My Public IP: https://ifconfig.me/ip
 
 - Find Info On Local NIC Configuration: Get-NetIPConfiguration
 
-- Find Info On a Public IP: https://ip-api.com/json/$IPaddress
+- Find Info On A IPv4/IPv6 Address Or Domain Name: function IPInfo. http://ip-api.com/json/$IPaddress
 
-- Find Info On a MAC ADDRESS: https://api.macvendors.com/$MACaddress
+- Find Info On A MAC ADDRESS: https://api.macvendors.com/$MACaddress
 
-- Speedtest (Must have Ookla Speedtest CLI Installed): function SPEED { SPEEDTEST }
+- Test Connection Speed. function SPEED { SPEEDTEST }. (Must have Ookla Speedtest CLI Installed/Configured) !!!
 
 
 PROCESS MANAGEMENT
 
-- Kill a process by name: function KillProc($name) { Stop-Process -Force }
+- Kill A Process By Name: function KillProc($name) { Stop-Process -Force }
 
-- Watch a process's resource usage live: function WatchProc($name)
+- Watch A Process's Resource Usage Live: function WatchProc($name)
 
 
 VPN / CONNECTIVITY
 
-- Check WireGuard adapter status: function VPNStatus
+- Check WireGuard/VPN Adapter Status: function VPNStatus
 
-- Ping home gateway to confirm reachability: function PingHome
+- Ping Home Gateway To Confirm Reachability: function PingHome
 
 
 CLIPBOARD & MISC UTILITIES
 
-- Generate a random password: function NewPassword($length = 30)
+- Generate A Random Password: function NewPassword($length = 30)
 
-- Quick file hash (SHA256): function Hash($path)
+- Quick File Hash (SHA256): function Hash($path)
 
-- Clear Windows temp files: function ClearTemp
+- Clear Windows Temp Files: function ClearTemp
 
-- Empty recycle bin: function EmptyBin
+- Empty Recycle Bin: function EmptyBin
 
 
 NAVIGATION & FILESYSTEM
 
-- Quick jump to common folders: function proj, function dl
+- Quick Jump To Common Folders: function proj, function dl
 
-- List files sorted by last modified: function lt
+- List Files Sorted By Last Modified: function lt
 
-- Go up N directories: function up($n = 1)
+- Go Up N Directories: function up($n = 1)
 
-- Copy current directory path to clipboard: function cpwd
+- Copy Current Directory Path To Clipboard: function cpwd
 
 
 PROFILE MANAGEMENT
 
-- List all custom functions currently loaded from this profile: function MyFunctions
+- List All Custom Functions Currently Loaded From This Profile: function MyFunctions
 
 
 WINGET FUNCTIONS
@@ -90,4 +91,3 @@ WINGET FUNCTIONS
 
 - WinGet App Updates Including Unknown: function WGUN { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown }
 
-- Restore Windows Health - DISM (currently commented out): function dism { DISM /ONLINE /CLEANUP-IMAGE /RESTOREHEALTH }
