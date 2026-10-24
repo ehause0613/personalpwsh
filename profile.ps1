@@ -16,10 +16,10 @@ function Update-PersonalProfile {
         $newhash = Get-FileHash "$env:temp/profile.ps1"
         if ($newhash.Hash -ne $oldhash.Hash) {
             Copy-Item -Path "$env:temp/profile.ps1" -Destination $HOME/Documents/PowerShell/profile.ps1 -Force
-            Write-Host "Personal Profile has been updated. Please restart to reflect changes" -ForegroundColor Magenta
+            Write-Host "Personal Profile Updated. Restart To Reflect Changes" -ForegroundColor Magenta
         }
         else {
-            Write-Host "Personal Profile is up to date." -ForegroundColor Green
+            Write-Host "Personal Profile Up To Date." -ForegroundColor Green
         }
     }
     catch {
@@ -90,7 +90,7 @@ function Disk {
 # Ping a specified IP to confirm reachability
 function PingIP {
     try {
-        $target = Read-Host "Enter IP address to ping"
+        $target = Read-Host "Enter IP Address To Ping:"
         Test-Connection $target -Count 4 -ErrorAction Stop
     }
     catch {
@@ -100,13 +100,13 @@ function PingIP {
 }
 
 # Flush DNS cache
-function FlushDNS { Clear-DnsClientCache; Write-Host "DNS cache cleared" -ForegroundColor Green }
+function FlushDNS { Clear-DnsClientCache; Write-Host "DNS cache cleared!" -ForegroundColor Green }
 
 # Quick port check
 function TestPort {
     try {
-        $target = Read-Host "Enter hostname or IP"
-        $port = Read-Host "Enter port"
+        $target = Read-Host "Enter Hostname Or IP:"
+        $port = Read-Host "Enter Port:"
         Test-NetConnection -ComputerName $target -Port $port
     }
     catch {
@@ -126,9 +126,9 @@ function NetIP {Get-NetIPConfiguration}
 # Find Info On a Public IP
 function IPInfo {
     try {
-        $IPaddress = Read-Host "Enter IP address to locate"
+        $IPaddress = Read-Host "Enter IP Address To Locate:"
 
-        $result = Invoke-RestMethod -Method Get -Uri "https://ip-api.com/json/$IPaddress"
+        $result = Invoke-RestMethod -Method Get -Uri "http://ip-api.com/json/$IPaddress"
         Write-Output $result
     }
     catch {
@@ -140,7 +140,7 @@ function IPInfo {
 # Find Info On A MAC ADDRESS
 function MAC {
     try {
-        $MACaddress = Read-Host "Enter MAC address to lookup"
+        $MACaddress = Read-Host "Enter MAC Address To Lookup:"
 
         $result = Invoke-RestMethod -Method Get -Uri "https://api.macvendors.com/$MACaddress"
         Write-Output $result
@@ -154,7 +154,7 @@ function MAC {
 # Speedtest (Must have Ookla Speedtest CLI Installed)
 function SPEED { 
     try {SPEEDTEST }
-    catch {Write-Host "⚠️ Install/Configure Ookla Speedtest CLI" -ForegroundColor Red
+    catch {Write-Host "⚠️ Install/Configure Ookla Speedtest CLI !" -ForegroundColor Red
         exit 1
         }
 }
@@ -223,7 +223,7 @@ function PingHome {
 #################################################################################################################################
 
 # Generate a random password
-function NewPassword($length = 24) {
+function NewPassword($length = 30) {
     -join ((48..57) + (65..90) + (97..122) | Get-Random -Count $length | ForEach-Object { [char]$_ })
 }
 
@@ -241,13 +241,13 @@ function Hash($path) {
 # Clear Windows temp files
 function ClearTemp {
     Remove-Item "$env:TEMP\*" -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Host "Temp files cleared" -ForegroundColor Green
+    Write-Host "Temp Files Cleared !" -ForegroundColor Green
 }
 
 # Empty recycle bin
 function EmptyBin {
     Clear-RecycleBin -Confirm:$false
-    Write-Host "Recycle Bin emptied" -ForegroundColor Green
+    Write-Host "Recycle Bin Emptied !" -ForegroundColor Green
 }
 
 #################################################################################################################################
@@ -268,6 +268,7 @@ function up($n = 1) { for ($i = 0; $i -lt $n; $i++) { Set-Location .. } }
 
 # Copy current directory path to clipboard
 function cpwd { (Get-Location).Path | Set-Clipboard }
+
 
 #################################################################################################################################
 ############                                                                                                         ############
