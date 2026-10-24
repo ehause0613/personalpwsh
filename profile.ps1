@@ -1,38 +1,8 @@
-$debug = $false
-
 # Define the path to the file that stores the last execution time
 $timeFilePath = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastExecutionTime.txt"
 
 # Define the update interval in days, set to -1 to always check
 $updateInterval = -1
-
-if ($debug) {
-    Write-Host "#######################################" -ForegroundColor Red
-    Write-Host "#           Debug mode enabled        #" -ForegroundColor Red
-    Write-Host "#          ONLY FOR DEVELOPMENT       #" -ForegroundColor Red
-    Write-Host "#                                     #" -ForegroundColor Red
-    Write-Host "#       IF YOU ARE NOT DEVELOPING     #" -ForegroundColor Red
-    Write-Host "#      JUST RUN \`Update-Profile\`    #" -ForegroundColor Red
-    Write-Host "#        to discard all changes       #" -ForegroundColor Red
-    Write-Host "#   and update to the latest profile  #" -ForegroundColor Red
-    Write-Host "#               version               #" -ForegroundColor Red
-    Write-Host "#######################################" -ForegroundColor Red
-}
-
-#################################################################################################################################
-############                                                                                                         ############
-############                                          !!!   WARNING:   !!!                                           ############
-############                                                                                                         ############
-############                DO NOT MODIFY THIS FILE. THIS FILE IS HASHED AND UPDATED AUTOMATICALLY.                  ############
-############                    ANY CHANGES MADE TO THIS FILE WILL BE OVERWRITTEN BY COMMITS TO                      ############
-############                             https://github.com/ehause0613/personalpwsh.git.                             ############
-############                                                                                                         ############
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
-############                                                                                                         ############
-############                      IF YOU WANT TO MAKE CHANGES, USE THE Edit-Profile FUNCTION                         ############
-############                              AND SAVE YOUR CHANGES IN THE FILE CREATED.                                 ############
-############                                                                                                         ############
-#################################################################################################################################
 
 # Initial GitHub.com connectivity check with 1 second timeout
 #$global:canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
@@ -58,21 +28,6 @@ function Update-PersonalProfile {
     finally {
         Remove-Item "$env:temp/profile.ps1" -ErrorAction SilentlyContinue
     }
-}
-
-# Check if not in debug mode AND (updateInterval is -1 OR file doesn't exist OR time difference is greater than the update interval)
-if (-not $debug -and `
-    ($updateInterval -eq -1 -or `
-            -not (Test-Path $timeFilePath) -or `
-        ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $timeFilePath), 'yyyy-MM-dd', $null)).TotalDays -gt $updateInterval)) {
-
-    Update-PersonalProfile
-    $currentTime = Get-Date -Format 'yyyy-MM-dd'
-    $currentTime | Out-File -FilePath $timeFilePath
-
-}
-elseif ($debug) {
-    Write-Warning "Skipping profile check in debug mode"
 }
 
 # Enable My Choice of Oh My Posh Theme
@@ -196,6 +151,14 @@ function MAC {
     }
 }
 
+# Speedtest (Must have Ookla Speedtest CLI Installed)
+function SPEED { 
+    try {SPEEDTEST }
+    catch {Write-Host "⚠️ Install/Configure Ookla Speedtest CLI" -ForegroundColor Red
+        exit 1
+        }
+}
+
 #################################################################################################################################
 ############                                                                                                         ############
 ############                                            Process Management                                           ############
@@ -241,7 +204,7 @@ function VPNStatus {
     }
 }
 
-# Ping your UDM gateway to confirm home network reachability
+# Ping your gateway/router to confirm home network reachability
 function PingHome {
     try {
         Test-Connection 10.0.1.1 -Count 4 -ErrorAction Stop
@@ -260,7 +223,7 @@ function PingHome {
 #################################################################################################################################
 
 # Generate a random password
-function NewPassword($length = 20) {
+function NewPassword($length = 24) {
     -join ((48..57) + (65..90) + (97..122) | Get-Random -Count $length | ForEach-Object { [char]$_ })
 }
 
@@ -322,17 +285,14 @@ function MyFunctions { Get-Command -CommandType Function | Where-Object { $_.Sou
 ############                                                                                                         ############
 #################################################################################################################################
 
-# WinGet App Updates List
-function WGL { winget upgrade }
-
 # WinGet App Updates
 function WGA { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force }
 
+# WinGet App Updates List
+function WGL { winget upgrade }
+
 # WinGet App Updates Including Unknown
 function WGUN { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown }
-
-# Speedtest (Must have Ookla Speedtest CLI Installed
-function SPEED { SPEEDTEST }
 
 # Restore Windows Health - DISM
 # function dism { DISM /ONLINE /CLEANUP-IMAGE /RESTOREHEALTH }
