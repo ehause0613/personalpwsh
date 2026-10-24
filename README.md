@@ -38,6 +38,8 @@ NETWORK FUNCTIONS
 
 - Find Info On a MAC ADDRESS: https://api.macvendors.com/$MACaddress
 
+- Speedtest (Must have Ookla Speedtest CLI Installed): function SPEED { SPEEDTEST }
+
 
 PROCESS MANAGEMENT
 
@@ -87,7 +89,5 @@ WINGET FUNCTIONS
 - WinGet App Updates: function WGA { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force }
 
 - WinGet App Updates Including Unknown: function WGUN { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown }
-
-- Speedtest (Must have Ookla Speedtest CLI Installed): function SPEED { SPEEDTEST }
 
 - Restore Windows Health - DISM (currently commented out): function dism { DISM /ONLINE /CLEANUP-IMAGE /RESTOREHEALTH }
