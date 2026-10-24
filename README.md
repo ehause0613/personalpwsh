@@ -57,7 +57,7 @@ VPN / CONNECTIVITY
 
 CLIPBOARD & MISC UTILITIES
 
-- Generate a random password: function NewPassword($length = 20)
+- Generate a random password: function NewPassword($length = 30)
 
 - Quick file hash (SHA256): function Hash($path)
 
