@@ -295,5 +295,3 @@ function WGL { winget upgrade }
 # WinGet App Updates Including Unknown
 function WGUN { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown }
 
-# Restore Windows Health - DISM
-# function dism { DISM /ONLINE /CLEANUP-IMAGE /RESTOREHEALTH }
