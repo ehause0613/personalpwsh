@@ -1,13 +1,13 @@
-# Define the path to the file that stores the last execution time
+# Define The Path To The File That Stores The Last Execution Time
 $timeFilePath = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastExecutionTime.txt"
 
-# Define the update interval in days, set to -1 to always check
+# Define The Update Interval In Days, Set To -1 To Always Check
 $updateInterval = -1
 
-# Initial GitHub.com connectivity check with 1 second timeout
+# Initial GitHub.com Connectivity Check With 1 Second Timeout
 #$global:canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
 
-# Check for Personal Profile Updates
+# Check For Personal Profile Updates
 function Update-PersonalProfile {
     try {
         $url = "https://raw.githubusercontent.com/ehause0613/personalpwsh/main/profile.ps1"
@@ -42,6 +42,7 @@ function Get-Theme_Override
 ############                                                                                                         ############
 #################################################################################################################################
 
+# Checks Weather At Your Location
 function Wx { (Invoke-WebRequest https://wttr.in).Content }
 
 #################################################################################################################################
@@ -50,7 +51,7 @@ function Wx { (Invoke-WebRequest https://wttr.in).Content }
 ############                                                                                                         ############
 #################################################################################################################################
 
-
+# Checks Time At Pre-Defined Loacations
 function Time {
     Invoke-RestMethod -Uri "https://timeapi.io/api/Time/current/zone?timeZone=America/New_York"
     Invoke-RestMethod -Uri "https://timeapi.io/api/Time/current/zone?timeZone=Europe/Dublin"
@@ -62,13 +63,13 @@ function Time {
 ############                                                                                                         ############
 #################################################################################################################################
 
-# Top processes by CPU
+# Top Processes By CPU
 function TopCPU { Get-Process | Sort-Object CPU -Descending | Select-Object -First 10 }
 
-# Top processes by RAM
+# Top Processes By RAM
 function TopRAM { Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 10 }
 
-# Disk space summary
+# Disk Space Summary
 function Disk {
     try {
         Get-PSDrive -PSProvider FileSystem | Select-Object Name,
@@ -87,7 +88,7 @@ function Disk {
 ############                                                                                                         ############
 #################################################################################################################################
 
-# Ping a specified IP to confirm reachability
+# Ping A Specified IP To Confirm Reachability
 function PingIP {
     try {
         $target = Read-Host "Enter IP Address To Ping"
@@ -99,10 +100,10 @@ function PingIP {
     }
 }
 
-# Flush DNS cache
+# Flush DNS Cache
 function FlushDNS { Clear-DnsClientCache; Write-Host "DNS cache cleared!" -ForegroundColor Green }
 
-# Quick port check
+# Quick Port Check
 function TestPort {
     try {
         $target = Read-Host "Enter Hostname Or IP"
@@ -115,15 +116,15 @@ function TestPort {
     }
 }
 
-# Show active listening ports
+# Show Active Listening Ports
 function Ports { Get-NetTCPConnection -State Listen | Select-Object LocalAddress, LocalPort, OwningProcess }
 
-# What is My Public IP
+# What Is My Public IP
 function PubIP { (Invoke-WebRequest https://ifconfig.me/ip).Content }
 
 function NetIP {Get-NetIPConfiguration}
 
-# Find Info On a Public IP
+# Find Info On A Public IP
 function IPInfo {
     try {
         $IPaddress = Read-Host "Enter IPv4/IPv6 Address Or Domain To Locate"
@@ -137,7 +138,7 @@ function IPInfo {
     }
 }
 
-# Find Info On A MAC ADDRESS
+# Find Info On A MAC Address
 function MAC {
     try {
         $MACaddress = Read-Host "Enter MAC Address To Lookup"
@@ -165,7 +166,7 @@ function SPEED {
 ############                                                                                                         ############
 #################################################################################################################################
 
-# Kill a process by name
+# Kill A Process By Name
 function KillProc($name) {
     try {
         Get-Process $name -ErrorAction Stop | Stop-Process -Force
@@ -176,7 +177,7 @@ function KillProc($name) {
     }
 }
 
-# Watch a process's resource usage live
+# Watch A Process's Resource Usage Live
 function WatchProc($name) {
     while ($true) {
         Clear-Host
@@ -192,7 +193,7 @@ function WatchProc($name) {
 ############                                                                                                         ############
 #################################################################################################################################
 
-# Quick check: am I on the VPN right now?
+# Quick Check: Am I On A VPN Right Now?
 function VPNStatus {
     param(
         [string[]]$Pattern = @('WireGuard', 'NordLynx', 'NordVPN', 'Tailscale', 'OpenVPN', 'TAP-Windows', 'AnyConnect', 'Fortinet')
@@ -212,14 +213,38 @@ function VPNStatus {
     }
 }
 
-# Ping your gateway/router to confirm home network reachability
+# Ping Your Gateway/Router To Confirm Network Reachability
 function PingHome {
+    param(
+        [string]$Gateway
+    )
+
     try {
-        Test-Connection 10.0.1.1 -Count 4 -ErrorAction Stop
+        # Auto-detect if no gateway was passed in
+        if (-not $Gateway) {
+            $Gateway = Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction SilentlyContinue |
+                Where-Object { $_.NextHop -ne '0.0.0.0' } |
+                Sort-Object { $_.RouteMetric + (Get-NetIPInterface -InterfaceIndex $_.InterfaceIndex -AddressFamily IPv4).InterfaceMetric } |
+                Select-Object -First 1 -ExpandProperty NextHop
+        }
+
+        # Prompt if detection failed
+        if (-not $Gateway) {
+            do {
+                $answer = Read-Host "Could not detect a gateway. Enter its IP address"
+                $ip = $null
+                $valid = [ipaddress]::TryParse($answer, [ref]$ip)
+                if (-not $valid) { Write-Host "That is not a valid IP address." -ForegroundColor Yellow }
+            } until ($valid)
+            $Gateway = $answer
+        }
+
+        Write-Host "Pinging gateway $Gateway..." -ForegroundColor Cyan
+        Test-Connection $Gateway -Count 4 -ErrorAction Stop
     }
     catch {
         Write-Host "⚠ Error in line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)" -ForegroundColor Red
-        exit 1
+        return
     }
 }
 
@@ -230,42 +255,62 @@ function PingHome {
 ############                                                                                                         ############
 #################################################################################################################################
 
-# Generate a random password
+# Generate A Random Password
 function NewPassword {
     param(
-        [int]$Length
+        [int]$Length,
+        [switch]$NoSpecial
     )
 
     # Prompt only if no length was passed in
     if (-not $PSBoundParameters.ContainsKey('Length')) {
         do {
-            $input = Read-Host "Password length (8-256, Enter for 30)"
-            if ([string]::IsNullOrWhiteSpace($input)) { $input = '30' }
-            $valid = [int]::TryParse($input, [ref]$Length) -and $Length -ge 8 -and $Length -le 256
+            $answer = Read-Host "Password length (8-256, Enter for 30)"
+            if ([string]::IsNullOrWhiteSpace($answer)) { $answer = '30' }
+            $valid = [int]::TryParse($answer, [ref]$Length) -and $Length -ge 8 -and $Length -le 256
             if (-not $valid) { Write-Host "Enter a whole number between 8 and 256." -ForegroundColor Yellow }
         } until ($valid)
     }
 
-    $chars = [char[]]((48..57) + (65..90) + (97..122))   # 0-9, A-Z, a-z (62 chars)
-    $rng   = [System.Security.Cryptography.RandomNumberGenerator]::Create()
-    $byte  = New-Object byte[] 1
-    $sb    = [System.Text.StringBuilder]::new()
+    $digits  = '0123456789'
+    $upper   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    $lower   = 'abcdefghijklmnopqrstuvwxyz'
+    $special = '!@#$%^&*()-_=+[]{};:,.?'
+
+    $sets = @($digits, $upper, $lower)
+    if (-not $NoSpecial) { $sets += $special }
+    $chars = [char[]]($sets -join '')
+
+    # Largest multiple of the set size that fits in a byte; values above it are discarded to avoid modulo bias
+    $limit = 256 - (256 % $chars.Count)
+
+    $rng  = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+    $byte = New-Object byte[] 1
 
     try {
-        while ($sb.Length -lt $Length) {
-            $rng.GetBytes($byte)
-            # 248 = 62 * 4; discarding 248-255 avoids modulo bias
-            if ($byte[0] -lt 248) { [void]$sb.Append($chars[$byte[0] % 62]) }
-        }
+        do {
+            $sb = [System.Text.StringBuilder]::new()
+            while ($sb.Length -lt $Length) {
+                $rng.GetBytes($byte)
+                if ($byte[0] -lt $limit) { [void]$sb.Append($chars[$byte[0] % $chars.Count]) }
+            }
+            $password = $sb.ToString()
+
+            # Regenerate until every character set is represented at least once
+            $hasAll = $true
+            foreach ($set in $sets) {
+                if ($password.IndexOfAny([char[]]$set) -lt 0) { $hasAll = $false; break }
+            }
+        } until ($hasAll)
     }
     finally {
         $rng.Dispose()
     }
 
-    $sb.ToString()
+    $password
 }
 
-# Quick file hash
+# Quick File Hash
 function Hash($path) {
     try {
         (Get-FileHash $path -Algorithm SHA256 -ErrorAction Stop).Hash
@@ -276,13 +321,13 @@ function Hash($path) {
     }
 }
 
-# Clear Windows temp files
+# Clear Windows Temp Files
 function ClearTemp {
     Remove-Item "$env:TEMP\*" -Recurse -Force -ErrorAction SilentlyContinue
     Write-Host "Temp Files Cleared !" -ForegroundColor Green
 }
 
-# Empty recycle bin
+# Empty Recycle Bin
 function EmptyBin {
     Clear-RecycleBin -Confirm:$false
     Write-Host "Recycle Bin Emptied !" -ForegroundColor Green
@@ -294,18 +339,20 @@ function EmptyBin {
 ############                                                                                                         ############
 #################################################################################################################################
 
-# Quick jump to common folders
+# Quick Jump To Common Folders
 function proj { Set-Location "C:\Users\$env:USERNAME\Projects" }
+
+function dc { Set-Location "$HOME\Documents" }
 
 function dl { Set-Location "$HOME\Downloads" }
 
-# ls with more detail, sorted by last modified
+# ls With More Detail, sorted by last modified
 function lt { Get-ChildItem | Sort-Object LastWriteTime -Descending }
 
-# Quick "go up N directories"
+# Quick "Go Up N Directories"
 function up($n = 1) { for ($i = 0; $i -lt $n; $i++) { Set-Location .. } }
 
-# Copy current directory path to clipboard
+# Copy Current Directory Path To Clipboard
 function cpwd { (Get-Location).Path | Set-Clipboard }
 
 
@@ -315,7 +362,7 @@ function cpwd { (Get-Location).Path | Set-Clipboard }
 ############                                                                                                         ############
 #################################################################################################################################
 
-# List all custom functions currently loaded from this profile
+# List All Custom Functions Currently Loaded From This Profile
 function MyFunctions { Get-Command -CommandType Function | Where-Object { $_.Source -eq '' } | Select-Object Name }
 
 
