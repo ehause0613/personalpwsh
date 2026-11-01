@@ -18,7 +18,7 @@ STARTUP BEHAVIOR
 
 - Chris Titus Profile Overrides: $EDITOR_Override = 'code' and function Set-PredictionSource_Override. Both skip slow command lookups in the Chris Titus profile at startup (about 1.2s combined). The prediction override applies the same PSReadLine settings CTT uses by default.
 
-- Personal Profile Auto-Update: function Update-PersonalProfile. Runs on every interactive shell launch. Downloads profile.ps1 from this repo (5-second timeout), refuses it if it has syntax errors, and replaces the local copy if it changed. Always push changes to GitHub before opening a new shell, or local edits are overwritten.
+- Personal Profile Auto-Update: function Update-PersonalProfile. Runs at most once every 24 hours on interactive shell launch (run Update-PersonalProfile to check immediately). Downloads profile.ps1 from this repo (5-second timeout), refuses it if it has syntax errors, and replaces the local copy if it changed. Always push changes to GitHub before opening a new shell, or local edits are overwritten.
 
 - Oh My Posh Theme: function Get-Theme_Override. Called automatically by the Chris Titus profile in place of its own theme. Uses agnosterplus, cached locally and refreshed weekly (5-second timeout). Uses the cached copy when offline.
 
