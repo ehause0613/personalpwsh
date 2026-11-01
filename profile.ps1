@@ -7,7 +7,7 @@ function Set-PredictionSource_Override {
     Set-PSReadLineOption -PredictionSource HistoryAndPlugin -MaximumHistoryCount 10000
 }
 
-# CHECK FOR PERSONAL PROFILE UPDATES
+# CHECK FOR PERSONAL PROFILE UPDATES (RETURNS $true IF THE CHECK COMPLETED)
 function Update-PersonalProfile {
     $url      = "https://raw.githubusercontent.com/ehause0613/personalpwsh/main/profile.ps1"
     $target   = "$HOME/Documents/PowerShell/profile.ps1"   # C:\Users\<username>\Documents\PowerShell\profile.ps1
@@ -22,7 +22,7 @@ function Update-PersonalProfile {
         [void][System.Management.Automation.Language.Parser]::ParseFile($tempFile, [ref]$tokens, [ref]$errors)
         if ($errors.Count -gt 0) {
             Write-Host "⚠ GitHub Profile Has A Syntax Error (Line $($errors[0].Extent.StartLineNumber): $($errors[0].Message)). Keeping Current Version." -ForegroundColor Yellow
-            return
+            return $false
         }
 
         # A missing local profile counts as out of date (first run on a new machine)
@@ -33,12 +33,11 @@ function Update-PersonalProfile {
             Copy-Item -Path $tempFile -Destination $target -Force
             Write-Host "Personal Profile Updated. Restart To Reflect Changes!" -ForegroundColor Magenta
         }
-        #else {
-        #    Write-Host "Personal Profile Up To Date." -ForegroundColor Green
-        #}
+        return $true
     }
     catch {
         Write-Host "⚠ Personal Profile Update Check Skipped: $($_.Exception.Message)" -ForegroundColor Yellow
+        return $false
     }
     finally {
         Remove-Item $tempFile -ErrorAction SilentlyContinue
@@ -843,7 +842,13 @@ function WGL { winget upgrade }
 function WGUN { winget upgrade --all --accept-package-agreements --accept-source-agreements --silent --force --include-unknown }
 
 
-# CHECK FOR PERSONAL PROFILE UPDATES ON EVERY INTERACTIVE SESSION
+# CHECK FOR PERSONAL PROFILE UPDATES AT MOST ONCE PER DAY (RUN Update-PersonalProfile TO FORCE A CHECK)
 if ($Host.Name -eq 'ConsoleHost') {
-    Update-PersonalProfile
+    $stampFile = "$HOME/Documents/PowerShell/.personal-profile-lastcheck"
+    $checkDue  = -not (Test-Path $stampFile) -or
+                 ((Get-Date) - (Get-Item $stampFile).LastWriteTime).TotalHours -ge 24
+
+    if ($checkDue -and (Update-PersonalProfile)) {
+        New-Item -Path $stampFile -ItemType File -Force | Out-Null
+    }
 }
