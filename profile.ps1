@@ -1,3 +1,12 @@
+# CHRIS TITUS PROFILE OVERRIDES (profile.ps1 loads before Microsoft.PowerShell_profile.ps1)
+# Skips CTT's editor search (nvim, pvim, vim, vi, then code), which cost ~1.1s per launch on missed lookups
+$EDITOR_Override = 'code'
+
+# Skips CTT's failed Get-Command lookup for this override (~0.1s); same settings CTT applies by default
+function Set-PredictionSource_Override {
+    Set-PSReadLineOption -PredictionSource HistoryAndPlugin -MaximumHistoryCount 10000
+}
+
 # CHECK FOR PERSONAL PROFILE UPDATES
 function Update-PersonalProfile {
     $url      = "https://raw.githubusercontent.com/ehause0613/personalpwsh/main/profile.ps1"
