@@ -438,8 +438,10 @@ function MAC {
 function LAT {
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromRemainingArguments)]
-        [object[]] $Arguments
+        [ValidateRange(1, 1000)]
+        [int] $Count = 100,
+
+        [switch] $Rebuild
     )
 
     $script = Join-Path -Path $HOME -ChildPath 'Latency.ps1'
@@ -447,10 +449,15 @@ function LAT {
     try {
         $ErrorActionPreference = 'Stop'
 
-        if (-not (Test-Path -LiteralPath $script -PathType Leaf)) {
-            Write-Host "Latency.ps1 Not Found. Creating It At '$script'..." -ForegroundColor Yellow
+        if ($Rebuild -or -not (Test-Path -LiteralPath $script -PathType Leaf)) {
+            Write-Host "Writing Latency.ps1 To '$script'..." -ForegroundColor Yellow
 
             $content = @'
+param(
+  [ValidateRange(1, 1000)]
+  [int] $Count = 100
+)
+
 $targets = @(
   @{ Name='Gateway (UDM)';      IP='10.0.2.1' }
   @{ Name='Cloudflare Secure';  IP='1.1.1.2' }
@@ -458,31 +465,42 @@ $targets = @(
   @{ Name='Google DNS';         IP='8.8.8.8' }
   @{ Name='Quad9';              IP='9.9.9.9' }
 )
-Write-Host "Pinging 5 targets x 100 in parallel (~100 s)..." -ForegroundColor Cyan
-$results = $targets | ForEach-Object -ThrottleLimit 5 -Parallel {
+
+Write-Host "Pinging $($targets.Count) targets x $Count in parallel (~$Count s)..." -ForegroundColor Cyan
+
+$results = $targets | ForEach-Object -ThrottleLimit $targets.Count -Parallel {
   $t = $_
-  $r = Test-Connection -TargetName $t.IP -Count 100 -IPv4 -ErrorAction SilentlyContinue
-  $lat = ($r | Where-Object Status -eq 'Success').Latency
-  $avg = ($lat | Measure-Object -Average).Average
-  $sd  = [math]::Sqrt((($lat | ForEach-Object { ($_ - $avg) * ($_ - $avg) }) | Measure-Object -Average).Average)
+  $n = $using:Count
+
+  $lat = @(
+    Test-Connection -TargetName $t.IP -Count $n -IPv4 -TimeoutSeconds 1 -ErrorAction SilentlyContinue |
+      Where-Object Status -eq 'Success' |
+      ForEach-Object Latency
+  )
+
+  $s = if ($lat.Count) { $lat | Measure-Object -AllStats }
+
   [pscustomobject]@{
-    Target   = $t.Name
-    IP       = $t.IP
-    Lost     = 100 - @($lat).Count
-    'Min ms' = ($lat | Measure-Object -Minimum).Minimum
-    'Avg ms' = [math]::Round($avg, 2)
-    'Max ms' = ($lat | Measure-Object -Maximum).Maximum
-    'Jitter ms' = [math]::Round($sd, 2)
+    Target      = $t.Name
+    IP          = $t.IP
+    Lost        = $n - $lat.Count
+    'Loss %'    = [math]::Round(100 * ($n - $lat.Count) / $n, 1)
+    'Min ms'    = $s.Minimum
+    'Avg ms'    = $s ? [math]::Round($s.Average, 2) : $null
+    'Max ms'    = $s.Maximum
+    'Jitter ms' = $s ? [math]::Round($s.StandardDeviation, 2) : $null
   }
 }
-$results | Sort-Object { $_.'Avg ms' } | Format-Table -AutoSize
+
+$results |
+  Sort-Object @{ Expression = { $null -eq $_.'Avg ms' } }, @{ Expression = { $_.'Avg ms' } } |
+  Format-Table -AutoSize
 '@
 
             Set-Content -LiteralPath $script -Value $content -Encoding utf8
-            Write-Host "Created '$script'." -ForegroundColor Green
         }
 
-        & $script @Arguments
+        & $script -Count $Count
     }
     catch {
         Write-Error -Message "Latency Failed: $($_.Exception.Message)" -TargetObject $script
