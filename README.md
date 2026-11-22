@@ -65,7 +65,7 @@ NETWORK FUNCTIONS
 - Find The Vendor Of A MAC Address: function MAC. https://api.macvendors.com/ Accepts any separator format; needs at least the first 3 bytes. Identifies randomized (locally administered) MACs. Limited to about 1 request per second.
   - MAC 00:1A:2B:3C:4D:5E
  
-- Test Network Latency: function LAT. Requires Latency.ps1 to be created on local machine.
+- Test Network Latency: function LAT. Creates Latency.ps1 on local machine, if not found.
 
 - Test Connection Speed: function SPEED. Requires Ookla Speedtest CLI.
 
