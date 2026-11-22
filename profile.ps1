@@ -434,6 +434,30 @@ function MAC {
     }
 }
 
+# CHECK COMPUTER NETWORK LATENCY (MUST HAVE Latency.ps1 ON LOCAL MACHINE)
+function LAT {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromRemainingArguments)]
+        [object[]] $Arguments
+    )
+
+    $script = Join-Path -Path $HOME -ChildPath 'Latency.ps1'
+
+    if (-not (Test-Path -LiteralPath $script -PathType Leaf)) {
+        Write-Error -Message "Latency script not found at '$script'." -Category ObjectNotFound -TargetObject $script
+        return
+    }
+
+    try {
+        $ErrorActionPreference = 'Stop'
+        & $script @Arguments
+    }
+    catch {
+        Write-Error -Message "Latency.ps1 failed: $($_.Exception.Message)" -TargetObject $script
+    }
+}
+
 # SPEEDTEST (MUST HAVE OOKLA SPEEDTEST CLI INSTALLED)
 function SPEED {
     if (-not (Get-Command speedtest -CommandType Application -ErrorAction SilentlyContinue)) {
