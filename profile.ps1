@@ -434,7 +434,7 @@ function MAC {
     }
 }
 
-# CHECK COMPUTER NETWORK LATENCY (MUST HAVE Latency.ps1 ON LOCAL MACHINE)
+# CHECK COMPUTER NETWORK LATENCY (CREATES Latency.ps1 ON LOCAL MACHINE)
 function LAT {
     [CmdletBinding()]
     param(
@@ -444,17 +444,48 @@ function LAT {
 
     $script = Join-Path -Path $HOME -ChildPath 'Latency.ps1'
 
-    if (-not (Test-Path -LiteralPath $script -PathType Leaf)) {
-        Write-Error -Message "Latency script not found at '$script'." -Category ObjectNotFound -TargetObject $script
-        return
-    }
-
     try {
         $ErrorActionPreference = 'Stop'
+
+        if (-not (Test-Path -LiteralPath $script -PathType Leaf)) {
+            Write-Host "Latency.ps1 Not Found. Creating It At '$script'..." -ForegroundColor Yellow
+
+            $content = @'
+$targets = @(
+  @{ Name='Gateway (UDM)';      IP='10.0.2.1' }
+  @{ Name='Cloudflare Secure';  IP='1.1.1.2' }
+  @{ Name='Cloudflare 1.0.0.2'; IP='1.0.0.2' }
+  @{ Name='Google DNS';         IP='8.8.8.8' }
+  @{ Name='Quad9';              IP='9.9.9.9' }
+)
+Write-Host "Pinging 5 targets x 100 in parallel (~100 s)..." -ForegroundColor Cyan
+$results = $targets | ForEach-Object -ThrottleLimit 5 -Parallel {
+  $t = $_
+  $r = Test-Connection -TargetName $t.IP -Count 100 -IPv4 -ErrorAction SilentlyContinue
+  $lat = ($r | Where-Object Status -eq 'Success').Latency
+  $avg = ($lat | Measure-Object -Average).Average
+  $sd  = [math]::Sqrt((($lat | ForEach-Object { ($_ - $avg) * ($_ - $avg) }) | Measure-Object -Average).Average)
+  [pscustomobject]@{
+    Target   = $t.Name
+    IP       = $t.IP
+    Lost     = 100 - @($lat).Count
+    'Min ms' = ($lat | Measure-Object -Minimum).Minimum
+    'Avg ms' = [math]::Round($avg, 2)
+    'Max ms' = ($lat | Measure-Object -Maximum).Maximum
+    'Jitter ms' = [math]::Round($sd, 2)
+  }
+}
+$results | Sort-Object { $_.'Avg ms' } | Format-Table -AutoSize
+'@
+
+            Set-Content -LiteralPath $script -Value $content -Encoding utf8
+            Write-Host "Created '$script'." -ForegroundColor Green
+        }
+
         & $script @Arguments
     }
     catch {
-        Write-Error -Message "Latency.ps1 failed: $($_.Exception.Message)" -TargetObject $script
+        Write-Error -Message "Latency Failed: $($_.Exception.Message)" -TargetObject $script
     }
 }
 
