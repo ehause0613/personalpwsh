@@ -2,6 +2,12 @@
 # Skips CTT's editor search (nvim, pvim, vim, vi, then code), which cost ~1.1s per launch on missed lookups
 $EDITOR_Override = 'code'
 
+# Suppress the CTT profile's "Use 'Show-Help'..." banner
+function Write-Host {
+    if ("$args" -like "*Use 'Show-Help' to display help*") { return }
+    Microsoft.PowerShell.Utility\Write-Host @args
+}
+
 # Skips CTT's failed Get-Command lookup for this override (~0.1s); same settings CTT applies by default
 function Set-PredictionSource_Override {
     Set-PSReadLineOption -PredictionSource HistoryAndPlugin -MaximumHistoryCount 10000
